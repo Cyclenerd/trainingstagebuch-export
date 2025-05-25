@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"io"
 	"math/rand"
@@ -14,6 +15,19 @@ import (
 )
 
 func main() {
+	var showHelp bool
+	flag.BoolVar(&showHelp, "help", false, "Show help information")
+	flag.BoolVar(&showHelp, "h", false, "Show help information (shorthand)")
+
+	// Parse command line arguments
+	flag.Parse()
+
+	// Show help if requested
+	if showHelp {
+		printHelp()
+		return
+	}
+
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Please enter (Copy & Paste) your session key from https://trainingstagebuch.org/login/sso: ")
 	ssoKey, err := reader.ReadString('\n')
@@ -178,4 +192,20 @@ func fileExists(filename string) bool {
 // Helper function to generate random wait time between min and max seconds
 func randomWaitTime(min, max int) int {
 	return min + rand.Intn(max-min+1)
+}
+
+// Helper function to print help information
+func printHelp() {
+	fmt.Println("Description:")
+	fmt.Println("  A tool to export workout data from Trainingstagebuch.org")
+	fmt.Println("\nUsage:")
+	fmt.Println("  trainingstagebuch-export")
+	fmt.Println("\nProcess:")
+	fmt.Println("  1. You will be prompted to enter your session key from https://trainingstagebuch.org/login/sso")
+	fmt.Println("  2. The tool will download a list of your workouts")
+	fmt.Println("  3. For each workout, it will download:")
+	fmt.Println("     - GPX track file")
+	fmt.Println("     - CSV data file")
+	fmt.Println("  4. Files are saved in the current directory as [ID].gpx and [ID].csv")
+	fmt.Println("  5. Existing files will be skipped")
 }
